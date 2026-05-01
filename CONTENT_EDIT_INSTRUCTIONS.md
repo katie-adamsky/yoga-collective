@@ -17,9 +17,10 @@ The content for each web page lives in an HTML file. For example, the Schedule p
 <h1>Home Page</h1>
 ```
 
-### Updating content in an HTML file
-To figure out where the content is, and which file you need to edit, you can go to the search bar and enter the text that you want to change. You can also look at the url on the website to figure out which file you need to edit. 
+### Finding which file to update
+To figure out where the content is, and which file you need to edit, you can go to the search bar and enter the text that you want to change. You can also look at the url on the website to figure out which file you need to edit - for example, if the url ends in `schedule.html`, you know that you need to edit the `schedule.html` file.
 
+### Updating content in an HTML file
 You can edit files directly on the Github website, by clicking on the file to open it, then clicking the pencil icon in the upper right corner.
 
 Once you are editing your file - **do not make changes to the tags!** Instead, make changes to the text *inside* the tags. Github will use different colors to identify the tags vs the text, so it will be easy to tell which text is safe to edit. So, if you wanted to change the name of your home page from "Home Page" to "Yoga Collective", you would edit the text to look like this:
