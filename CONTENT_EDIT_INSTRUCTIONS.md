@@ -18,7 +18,7 @@ The content for each web page lives in an HTML file. For example, the Schedule p
 ```
 
 ### Finding which file to update
-To figure out where the content is, and which file you need to edit, you can go to the search bar and enter the text that you want to change. You can also look at the url on the website to figure out which file you need to edit - for example, if the url ends in `schedule.html`, you know that you need to edit the `schedule.html` file.
+There are only 4 pages on the site right now, so it should be pretty easy to track down your text. To figure out where the content is, and which file you need to edit, you can go to Github's search bar and enter the text that you want to change. You can also look at the url on the website to figure out which file you need to edit - for example, if the url ends in `schedule.html`, you know that you need to edit the `schedule.html` file.
 
 ### Updating content in an HTML file
 You can edit files directly on the Github website, by clicking on the file to open it, then clicking the pencil icon in the upper right corner.
