@@ -10,6 +10,8 @@
     <style>
         main { max-width: 760px; margin: 0 auto; padding: 3rem 2rem 5rem; }
 
+        .state-box { padding: 3rem 0; text-align: center; color: var(--muted); font-size: 0.875rem; }
+
         .teacher-entry { display: flex; gap: 2rem; padding: 3rem 0; border-bottom: 1px solid var(--border); }
         .teacher-entry:first-child { border-top: 1px solid var(--border); }
 
@@ -48,21 +50,9 @@
 
 <main>
 
-    <!-- Copy and paste a .teacher-entry block for each teacher -->
-
-    <div class="teacher-entry">
-        <div class="teacher-photo">
-            <img src="images/teachers/name.jpg" alt="Teacher Name">
-        </div>
-        <div class="teacher-details">
-            <div class="teacher-name">Teacher Name</div>
-            <div class="teacher-specialty">Vinyasa · Yin</div>
-            <p class="teacher-bio">Bio goes here.</p>
-            <div class="teacher-links">
-                <a href="" target="_blank">Instagram →</a>
-            </div>
-        </div>
-    </div>
+    <div id="loading" class="state-box">Loading…</div>
+    <div id="error" class="state-box" style="display:none;"></div>
+    <div id="teachers-list" style="display:none;"></div>
 
 </main>
 
@@ -71,6 +61,105 @@
     <p><a href="mailto:cityyogacollective@gmail.com">cityyogacollective@gmail.com</a></p>
     <p class="footer-mission">An inclusive space to move between effort and ease with presence, curiosity, and care.</p>
 </footer>
+
+<script>
+    const SHEET_ID  = '1CFtGQF80q2H0T1UlOor4HApt8540FNba6gWuhXAAjKg';
+    const SHEET_TAB = 'Form Responses 1';
+    const API_KEY   = 'AIzaSyBRVe6tRJpeag_gL0OuS53BS7nrVrU_hFA';
+
+    const EMOJI_POOL = [
+        '🌞', '🌳', '🐦', '🦉', '🐸', '🦎', '🦅', '🦁', '🐦‍⬛', '🐝', '🦋', '🐈', '🪽', '🪷',
+        '🌸', '🌻', '🌈', '🍒', '⛰️', '🌱', '🌀', '🌿'
+    ];
+
+    const emojiStart = Math.floor(Math.random() * EMOJI_POOL.length);
+    const emojiMap = new Map();
+    function emojiFor(name) {
+        if (!emojiMap.has(name)) {
+            emojiMap.set(name, EMOJI_POOL[(emojiStart + emojiMap.size) % EMOJI_POOL.length]);
+        }
+        return emojiMap.get(name);
+    }
+
+    async function loadTeachers() {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(SHEET_TAB)}?key=${API_KEY}`;
+        try {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`API error ${res.status}`);
+            const data = await res.json();
+
+            if (!data.values || data.values.length < 2) {
+                showError('No teacher info available yet. Check back soon.');
+                return;
+            }
+
+            renderTeachers(data.values);
+        } catch (err) {
+            showError('Unable to load teacher info. Please try again later or email cityyogacollective@gmail.com.');
+        }
+    }
+
+    function renderTeachers(values) {
+        const headers = values[0];
+        const rows    = values.slice(1);
+
+        const nameIdx    = headers.findIndex(h => /^name$/i.test(h.trim()));
+        const bioIdx     = headers.findIndex(h => /bio/i.test(h));
+        const stylesIdx  = headers.findIndex(h => /style/i.test(h));
+        const websiteIdx = headers.findIndex(h => /website/i.test(h));
+
+        const container = document.getElementById('teachers-list');
+
+        rows.forEach(row => {
+            const name    = (row[nameIdx]    || '').trim();
+            const bio     = (row[bioIdx]     || '').trim();
+            const styles  = stylesIdx  >= 0 ? (row[stylesIdx]  || '').trim() : '';
+            const website = websiteIdx >= 0 ? (row[websiteIdx] || '').trim() : '';
+
+            if (!name) return;
+
+            const stylesHtml  = styles  ? `<div class="teacher-specialty">${escapeHtml(styles)}</div>` : '';
+            const websiteHtml = website ? `<div class="teacher-links"><a href="${escapeHtml(website)}" target="_blank">Website →</a></div>` : '';
+
+            const firstName = name.split(' ')[0].toLowerCase();
+            const emoji = emojiFor(name);
+
+            const entry = document.createElement('div');
+            entry.className = 'teacher-entry';
+            entry.innerHTML = `
+                <div class="teacher-photo">
+                    <img src="images/teachers/${firstName}.webp" alt="${escapeHtml(name)}"
+                         onerror="this.parentElement.textContent='${emoji}'">
+                </div>
+                <div class="teacher-details">
+                    <div class="teacher-name">${escapeHtml(name)}</div>
+                    ${stylesHtml}
+                    <p class="teacher-bio">${escapeHtml(bio)}</p>
+                    ${websiteHtml}
+                </div>`;
+
+            container.appendChild(entry);
+        });
+
+        document.getElementById('loading').style.display = 'none';
+        container.style.display = 'block';
+    }
+
+    function showError(msg) {
+        document.getElementById('loading').style.display = 'none';
+        const errorDiv = document.getElementById('error');
+        errorDiv.textContent = msg;
+        errorDiv.style.display = 'block';
+    }
+
+    function escapeHtml(str) {
+        const d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+    }
+
+    loadTeachers();
+</script>
 
 </body>
 </html>
