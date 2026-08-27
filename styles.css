@@ -22,8 +22,9 @@ body {
 /* Nav */
 nav {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    align-items: stretch;
+    align-items: center;
     padding: 0;
     border-bottom: 1px solid var(--border);
 }
@@ -38,7 +39,17 @@ nav {
     text-transform: uppercase;
     text-decoration: none;
     color: var(--text);
-    background: var(--bg);
+}
+
+.nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 1rem 1.25rem;
+    font-size: 1.375rem;
+    line-height: 1;
+    color: var(--text);
 }
 
 .nav-links {
@@ -114,5 +125,13 @@ footer a:hover { text-decoration: underline; }
 
 @media (max-width: 600px) {
     .nav-logo { padding: 1rem 1.25rem; font-size: 0.875rem; }
-    .nav-links { padding: 0 1.25rem; gap: 1.25rem; }
+    nav.open .nav-links {
+        width: 100%;
+        flex-direction: column;
+        padding: 0.25rem 1.25rem 0.75rem;
+        border-top: 1px solid var(--border);
+        gap: 0;
+    }
+    nav.open .nav-links a { display: block; padding: 0.75rem 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    nav.open .nav-links li:last-child a { border-bottom: none; }
 }
