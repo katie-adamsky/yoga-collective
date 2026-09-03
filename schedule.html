@@ -112,7 +112,8 @@
         const titleIdx   = headers.findIndex(h => /type/i.test(h));
         const teacherIdx = headers.findIndex(h => /teacher 1/i.test(h));
         const t2Idx      = headers.findIndex(h => /teacher 2/i.test(h));
-        const linkIdx    = headers.findIndex(h => /link/i.test(h));
+        // Sheets may have more than one "Link"/"URL" column (some blank) — collect them all.
+        const linkIdxs   = headers.map((h, i) => /link|url/i.test(h || '') ? i : -1).filter(i => i >= 0);
 
         return rows.map(row => ({
             date:       row[dateIdx]    || '',
@@ -120,7 +121,7 @@
             title:      row[titleIdx]   || '',
             teacher:    row[teacherIdx] || '',
             teacher2:   t2Idx >= 0   ? (row[t2Idx]   || '') : '',
-            signupLink: linkIdx >= 0 ? (row[linkIdx] || '') : '',
+            signupLink: linkIdxs.map(i => (row[i] || '').trim()).find(Boolean) || '',
         }));
     }
 
